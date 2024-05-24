@@ -1,0 +1,161 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_VOTERS 100
+#define MAX_CANDIDATES 5
+
+typedef struct {
+    char name[50];
+    int id;
+    int hasVoted;
+} Voter;
+
+typedef struct {
+    char name[50];
+    int votes;
+} Candidate;
+
+Voter voters[MAX_VOTERS];
+Candidate candidates[MAX_CANDIDATES];
+int voterCount = 0;
+int candidateCount = 0;
+
+// Function prototypes
+void registerVoter();
+void addCandidate();
+void castVote();
+void showResults();
+int findVoterById(int id);
+void initializeCandidates();
+
+int main() {
+    int choice;
+
+    initializeCandidates();
+    
+    while(1) {
+        printf("\nVoting Management System\n");
+        printf("1. Register Voter\n");
+        printf("2. Add Candidate\n");
+        printf("3. Cast Vote\n");
+        printf("4. Show Results\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar();  // to consume newline character
+
+        switch(choice) {
+            case 1:
+                registerVoter();
+                break;
+            case 2:
+                addCandidate();
+                break;
+            case 3:
+                castVote();
+                break;
+            case 4:
+                showResults();
+                break;
+            case 5:
+                exit(0);
+            default:
+                printf("Invalid choice! Please try again.\n");
+        }
+    }
+    
+    return 0;
+}
+
+void registerVoter() {
+    if (voterCount >= MAX_VOTERS) {
+        printf("Voter registration is full!\n");
+        return;
+    }
+    printf("Enter voter name: ");
+    fgets(voters[voterCount].name, sizeof(voters[voterCount].name), stdin);
+    voters[voterCount].name[strcspn(voters[voterCount].name, "\n")] = '\0'; // Remove newline character
+    printf("Enter voter ID: ");
+    scanf("%d", &voters[voterCount].id);
+    getchar();  // to consume newline character
+    voters[voterCount].hasVoted = 0;
+    voterCount++;
+    printf("Voter registered successfully!\n");
+}
+
+void addCandidate() {
+    if (candidateCount >= MAX_CANDIDATES) {
+        printf("Candidate registration is full!\n");
+        return;
+    }
+    printf("Enter candidate name: ");
+    fgets(candidates[candidateCount].name, sizeof(candidates[candidateCount].name), stdin);
+    candidates[candidateCount].name[strcspn(candidates[candidateCount].name, "\n")] = '\0'; // Remove newline character
+    candidates[candidateCount].votes = 0;
+    candidateCount++;
+    printf("Candidate added successfully!\n");
+}
+
+void castVote() {
+    int voterID, candidateNumber;
+
+    printf("Enter voter ID: ");
+    scanf("%d", &voterID);
+    getchar();  // to consume newline character
+
+    int voterIndex = findVoterById(voterID);
+    if (voterIndex == -1) {
+        printf("Voter not found!\n");
+        return;
+    }
+    
+    if (voters[voterIndex].hasVoted) {
+        printf("You have already voted!\n");
+        return;
+    }
+
+    printf("Candidates:\n");
+    for (int i = 0; i < candidateCount; i++) {
+        printf("%d. %s\n", i + 1, candidates[i].name);
+    }
+    printf("Enter candidate number to vote for: ");
+    scanf("%d", &candidateNumber);
+    getchar();  // to consume newline character
+
+    if (candidateNumber < 1 || candidateNumber > candidateCount) {
+        printf("Invalid candidate number!\n");
+        return;
+    }
+
+    candidates[candidateNumber - 1].votes++;
+    voters[voterIndex].hasVoted = 1;
+    printf("Vote cast successfully!\n");
+}
+
+void showResults() {
+    printf("Election Results:\n");
+    for (int i = 0; i < candidateCount; i++) {
+        printf("%s: %d votes\n", candidates[i].name, candidates[i].votes);
+    }
+}
+
+int findVoterById(int id) {
+    for (int i = 0; i < voterCount; i++) {
+        if (voters[i].id == id) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void initializeCandidates() {
+    // Optional: Initialize some default candidates
+    strcpy(candidates[0].name, "Alice");
+    candidates[0].votes = 0;
+    strcpy(candidates[1].name, "Bob");
+    candidates[1].votes = 0;
+    strcpy(candidates[2].name, "Charlie");
+    candidates[2].votes = 0;
+    candidateCount = 3;
+}
