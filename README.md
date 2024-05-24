@@ -1,6 +1,4 @@
-# Voting-Management-System-in-C
-
-# Description of Voting Management System in C
+# Voting Management System in C
 
 The Voting Management System is a console-based application designed to manage the voting process efficiently and transparently. Implemented in the C programming language, this system allows for voter registration, candidate addition, vote casting, and result display. It is structured to be simple and intuitive, making it easy to understand and use.
 
